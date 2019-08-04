@@ -1,7 +1,7 @@
 const httpStatus = require('http-status');
 const {omit} = require('lodash');
 const Order = require('../models/order.model');
-// const authProviders = require('../services/authProviders');
+const authProviders = require('../services/authProviders');
 
 /**
  * Load order and append to req.
@@ -30,14 +30,31 @@ exports.get = (req, res) => res.json(req.locals.order.transform());
  */
 exports.create = async (req, res, next) => {
   try {
-    const user = new Order(req.body);
-    const savedUser = await user.save();
-    res.status(httpStatus.CREATED);
-    res.json(savedUser.transform());
+    const order = new Order(req.body);
+    const savedorder = await order.save();
+
+    // eslint-disable-next-line no-unused-vars
+    createPayout(req, savedorder).then((response) => {
+      res.status(httpStatus.CREATED);
+      res.json(savedorder.transform());
+    }).catch((err) => {
+      next(err);
+    });
   } catch (error) {
     next(Order.checkValidation(error));
   }
 };
+
+
+const createPayout = async (req, order) => new Promise((resolve, reject) => {
+  const body = req.body.payment;
+  body.createdBy = `${order.createdBy}`;
+  authProviders.payment(req.headers.authorization, body).then((res) => {
+    resolve(res);
+  }).catch((err) => {
+    reject(err);
+  });
+});
 
 /**
  * Replace existing order

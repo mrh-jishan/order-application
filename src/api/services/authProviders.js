@@ -36,33 +36,25 @@ exports.google = async (access_token) => {
 };
 
 
-exports.payment = async (accessToken, data) => {
+exports.payment = async (accessToken, body) => {
   const paymentHost = process.env.PAYMENT_URI || 'http://localhost:4000';
   const url = `${paymentHost}/v1/payment`;
 
-  console.log('accessToken-*******************---', accessToken);
-  console.log('body-------------', data);
-  console.log('url------------', url)
   const headers = {
     'User-Agent': 'Super Agent/0.0.1',
     'content-type': 'application/json',
     Authorization: accessToken
-  }
+  };
 
   const options = {
     url,
     method: 'POST',
     headers,
-    body: data,
+    body,
     json: true
-  }
+  };
 
-  request(options, (error, response, body) => {
-    // eslint-disable-next-line eqeqeq
-    // Print out the response body
-    console.log('output ^^^^^^^^^^^^^^^^^^^^^', body);
-    console.log('output ^^^^^^^^^^^^^^^^^^^^^', error);
-    console.log('output ^^^^^^^^^^^^^^^^^^^^^', response);
-
+  return request(options, (error, response, data) => {
+    return data;
   });
-}
+};
