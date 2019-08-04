@@ -1,6 +1,7 @@
 const httpStatus = require('http-status');
 const {omit} = require('lodash');
 const Order = require('../models/order.model');
+// const authProviders = require('../services/authProviders');
 
 /**
  * Load order and append to req.
