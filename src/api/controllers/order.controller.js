@@ -39,7 +39,8 @@ exports.create = async (req, res, next) => {
       const tOrder = savedorder.transform();
       tOrder.payout = {
         status: response.status,
-        cardHolderName: response.cardHolderName
+        cardHolderName: response.cardHolderName,
+        product: response.product
       }
       res.json(tOrder);
     }).catch((err) => {
@@ -54,6 +55,7 @@ exports.create = async (req, res, next) => {
 const createPayout = async (req, order) => new Promise((resolve, reject) => {
   const body = req.body.payment;
   body.createdBy = `${order.createdBy}`;
+  body.product = `${order.product}`;
   authProviders.payment(req.headers.authorization, body).then((res) => {
     resolve(res);
   }).catch((err) => {
