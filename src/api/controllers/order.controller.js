@@ -36,7 +36,12 @@ exports.create = async (req, res, next) => {
     // eslint-disable-next-line no-unused-vars
     createPayout(req, savedorder).then((response) => {
       res.status(httpStatus.CREATED);
-      res.json(savedorder.transform());
+      const tOrder = savedorder.transform();
+      tOrder.payout = {
+        status: response.status,
+        cardHolderName: response.cardHolderName
+      }
+      res.json(tOrder);
     }).catch((err) => {
       next(err);
     });

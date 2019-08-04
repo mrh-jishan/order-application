@@ -53,8 +53,14 @@ exports.payment = async (accessToken, body) => {
     body,
     json: true
   };
-
-  return request(options, (error, response, data) => {
-    return data;
+  return new Promise((resolve, reject) => {
+    request(options, (error, response, data) => {
+      if (error) {
+        reject(error);
+      } else {
+        resolve(data);
+      }
+    });
   });
+
 };
