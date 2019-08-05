@@ -1,8 +1,7 @@
 const httpStatus = require('http-status');
-const {omit} = require('lodash');
 const Order = require('../models/order.model');
 const serviceProviders = require('../services/serviceProviders');
-
+const APIError = require('../utils/APIError');
 /**
  * Load order and append to req.
  * @public
@@ -52,7 +51,6 @@ exports.create = async (req, res, next) => {
   }
 };
 
-
 const createPayout = async (req, order) => new Promise((resolve, reject) => {
   const body = req.body.payment;
   body.createdBy = `${order.createdBy}`;
@@ -66,37 +64,22 @@ const createPayout = async (req, order) => new Promise((resolve, reject) => {
 });
 
 /**
- * Replace existing order
+ * cancel existing order
  * @public
  */
-exports.replace = async (req, res, next) => {
-  try {
-    const {order} = req.locals;
-    const newOrder = new Order(req.body);
-    const ommitRole = order.role !== 'admin' ? 'role' : '';
-    const newOrderObject = omit(newOrder.toObject(), '_id', ommitRole);
-
-    await order.update(newOrderObject, {override: true, upsert: true});
-    const savedOrder = await Order.findById(order._id);
-
-    res.json(savedOrder.transform());
-  } catch (error) {
-    next(Order.checkDuplicateEmail(error));
+exports.cancelOrder = (req, res, next) => {
+  const {order} = req.locals;
+  if (order.status === 'created') {
+    order.status = 'canceled';
+    order.save()
+      .then(savedOrder => res.json(savedOrder.transform()))
+      .catch(e => next(e));
+  } else {
+    throw new APIError({
+      message: 'Sorry! Order is not in created mode',
+      status: httpStatus.BAD_REQUEST
+    });
   }
-};
-
-/**
- * Update existing order
- * @public
- */
-exports.update = (req, res, next) => {
-  const ommitRole = req.locals.order.role !== 'admin' ? 'role' : '';
-  const updatedOrder = omit(req.body, ommitRole);
-  const order = Object.assign(req.locals.order, updatedOrder);
-
-  order.save()
-    .then(savedOrder => res.json(savedOrder.transform()))
-    .catch(e => next(e));
 };
 
 /**

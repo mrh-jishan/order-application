@@ -6,7 +6,7 @@ const APIError = require('../utils/APIError');
 /**
  * Random Payment Status
  */
-const paymentStatus = ['declined', 'confirmed'];
+const paymentStatus = ['declined', 'canceled', 'confirmed'];
 
 /**
  * Payment Schema

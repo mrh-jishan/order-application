@@ -2,7 +2,7 @@ const express = require('express');
 const validate = require('express-validation');
 const controller = require('../../controllers/order.controller');
 const {authorize} = require('../../middlewares/auth');
-const {createOrder} = require('../../validations/order.validation');
+const {createOrder, cancelOrder} = require('../../validations/order.validation');
 
 const router = express.Router();
 
@@ -16,6 +16,10 @@ router
   .route('/')
   .get(authorize(), controller.list)
   .post(authorize(), validate(createOrder), controller.create);
+
+router
+  .route('/:orderId/cancel')
+  .put(authorize(), validate(cancelOrder), controller.cancelOrder);
 
 // router
 //   .route('/:orderId')

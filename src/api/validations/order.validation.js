@@ -18,14 +18,10 @@ module.exports = {
     }
   },
   // PATCH /v1/order/:orderId
-  updateOrder: {
-    body: {
-      createdBy: Joi.string().max(128),
-      product: Joi.string().max(128),
-      status: Joi.string().valid(Order.status)
-    },
+  cancelOrder: {
+    body: {},
     params: {
-      userId: Joi.string().regex(/^[a-fA-F0-9]{24}$/).required()
+      orderId: Joi.string().regex(/^[a-fA-F0-9]{24}$/).required()
     }
   }
 };

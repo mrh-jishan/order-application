@@ -35,5 +35,23 @@ cron.schedule('* * * * *', async () => {
       });
     }
   }
-  console.log('end deliver the product');
+});
+
+// running every minutes to make the payout cancel
+cron.schedule('* * * * *', async () => {
+  console.log('started checking the payment of the order');
+  const order = await Order.findOne({status: 'canceled'});
+  console.log('searched order------------>', order);
+  if (order) {
+    const payment = await Payment.findOne({order: order._id});
+    console.log('searched payment------------>', payment);
+    if (payment) {
+      payment.status = 'canceled';
+      payment.save().then((res) => {
+        console.log('payment updated to declined---------->', res);
+      }).catch((err) => {
+        console.log('payment update failed to declined------------->', err);
+      });
+    }
+  }
 });

@@ -6,7 +6,7 @@ const httpStatus = require('http-status');
 /**
  * Order status
  */
-const status = ['created', 'declined', 'confirmed', 'delivered'];
+const status = ['created', 'declined', 'canceled', 'confirmed', 'delivered'];
 
 
 /**
