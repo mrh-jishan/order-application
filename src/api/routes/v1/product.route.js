@@ -20,9 +20,7 @@ router
 router
   .route('/:productId')
   .get(authorize(), controller.get)
-  // .put(authorize(LOGGED_USER), validate(replaceUser), controller.replace)
   .patch(authorize(ADMIN), validate(updateProduct), controller.update)
   .delete(authorize(ADMIN), controller.remove);
-
 
 module.exports = router;

@@ -17,7 +17,6 @@ module.exports = {
       })
     }
   },
-
   // PATCH /v1/order/:orderId
   updateOrder: {
     body: {

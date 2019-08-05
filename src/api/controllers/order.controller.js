@@ -1,7 +1,7 @@
 const httpStatus = require('http-status');
 const {omit} = require('lodash');
 const Order = require('../models/order.model');
-const authProviders = require('../services/authProviders');
+const serviceProviders = require('../services/serviceProviders');
 
 /**
  * Load order and append to req.
@@ -56,7 +56,7 @@ const createPayout = async (req, order) => new Promise((resolve, reject) => {
   const body = req.body.payment;
   body.createdBy = `${order.createdBy}`;
   body.product = `${order.product}`;
-  authProviders.payment(req.headers.authorization, body).then((res) => {
+  serviceProviders.payment(req.headers.authorization, body).then((res) => {
     resolve(res);
   }).catch((err) => {
     reject(err);
