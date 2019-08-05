@@ -40,7 +40,8 @@ exports.create = async (req, res, next) => {
       tOrder.payout = {
         status: response.status,
         cardHolderName: response.cardHolderName,
-        product: response.product
+        product: response.product,
+        order: response.order
       }
       res.json(tOrder);
     }).catch((err) => {
@@ -56,6 +57,7 @@ const createPayout = async (req, order) => new Promise((resolve, reject) => {
   const body = req.body.payment;
   body.createdBy = `${order.createdBy}`;
   body.product = `${order.product}`;
+  body.order = `${order._id}`;
   serviceProviders.payment(req.headers.authorization, body).then((res) => {
     resolve(res);
   }).catch((err) => {

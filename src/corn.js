@@ -24,7 +24,7 @@ cron.schedule('* * * * *', async () => {
   const order = await Order.findOne({status: 'created'});
   console.log('searched order------------>', order);
   if (order) {
-    const payment = await Payment.findOne({product: order.product});
+    const payment = await Payment.findOne({order: order._id});
     console.log('searched payment------------>', payment);
     if (payment) {
       order.status = payment.status;

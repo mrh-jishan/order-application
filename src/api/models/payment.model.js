@@ -45,6 +45,11 @@ const paymentSchema = new mongoose.Schema({
     required: true,
     trim: true
   },
+  order: {
+    type: String,
+    required: true,
+    trim: true
+  },
   status: {
     type: String,
     enum: paymentStatus,
@@ -62,7 +67,7 @@ const paymentSchema = new mongoose.Schema({
 paymentSchema.method({
   transform() {
     const transformed = {};
-    const fields = ['id', 'cardHolderName', 'cardNumber', 'expiryMonth', 'expiryYear', 'cvc', 'createdBy', 'product', 'status', 'createdAt'];
+    const fields = ['id', 'cardHolderName', 'cardNumber', 'expiryMonth', 'expiryYear', 'cvc', 'createdBy', 'product', 'order', 'status', 'createdAt'];
 
     fields.forEach((field) => {
       transformed[field] = this[field];
