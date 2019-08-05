@@ -14,7 +14,7 @@ router.param('productId', controller.load);
 
 router
   .route('/')
-  .get(authorize(ADMIN), controller.list)
+  .get(authorize(), controller.list)
   .post(authorize(ADMIN), validate(createProduct), controller.create);
 
 router
