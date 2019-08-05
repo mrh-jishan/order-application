@@ -24,56 +24,56 @@ exports.get = (req, res) => res.json(req.locals.product.transform());
 
 
 /**
- * Create new user
+ * Create new product
  * @public
  */
 exports.create = async (req, res, next) => {
   try {
-    const user = new Product(req.body);
-    const savedUser = await user.save();
+    const product = new Product(req.body);
+    const savedOrder = await product.save();
     res.status(httpStatus.CREATED);
-    res.json(savedUser.transform());
+    res.json(savedOrder.transform());
   } catch (error) {
     next();
   }
 };
 
 /**
- * Replace existing user
+ * Replace existing product
  * @public
  */
 exports.replace = async (req, res, next) => {
   try {
-    const {user} = req.locals;
-    const newUser = new Product(req.body);
-    const ommitRole = user.role !== 'admin' ? 'role' : '';
-    const newUserObject = omit(newUser.toObject(), '_id', ommitRole);
+    const {product} = req.locals;
+    const newOrder = new Product(req.body);
+    const ommitRole = product.role !== 'admin' ? 'role' : '';
+    const newOrderObject = omit(newOrder.toObject(), '_id', ommitRole);
 
-    await user.update(newUserObject, {override: true, upsert: true});
-    const savedUser = await Product.findById(user._id);
+    await product.update(newOrderObject, {override: true, upsert: true});
+    const savedOrder = await Product.findById(product._id);
 
-    res.json(savedUser.transform());
+    res.json(savedOrder.transform());
   } catch (error) {
     next();
   }
 };
 
 /**
- * Update existing user
+ * Update existing product
  * @public
  */
 exports.update = (req, res, next) => {
-  const ommitRole = req.locals.user.role !== 'admin' ? 'role' : '';
+  const ommitRole = req.locals.product.role !== 'admin' ? 'role' : '';
   const updatedUser = omit(req.body, ommitRole);
-  const user = Object.assign(req.locals.user, updatedUser);
+  const product = Object.assign(req.locals.product, updatedUser);
 
-  user.save()
+  product.save()
     .then(savedProduct => res.json(savedProduct.transform()))
     .catch(e => next(e));
 };
 
 /**
- * Get user list
+ * Get product list
  * @public
  */
 exports.list = async (req, res, next) => {
@@ -87,13 +87,13 @@ exports.list = async (req, res, next) => {
 };
 
 /**
- * Delete user
+ * Delete product
  * @public
  */
 exports.remove = (req, res, next) => {
-  const {user} = req.locals;
+  const {product} = req.locals;
 
-  user.remove()
+  product.remove()
     .then(() => res.status(httpStatus.NO_CONTENT).end())
     .catch(e => next(e));
 };

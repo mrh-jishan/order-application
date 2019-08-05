@@ -31,12 +31,12 @@ exports.get = (req, res) => res.json(req.locals.order.transform());
 exports.create = async (req, res, next) => {
   try {
     const order = new Order(req.body);
-    const savedorder = await order.save();
+    const savedOrder = await order.save();
 
     // eslint-disable-next-line no-unused-vars
-    createPayout(req, savedorder).then((response) => {
+    createPayout(req, savedOrder).then((response) => {
       res.status(httpStatus.CREATED);
-      const tOrder = savedorder.transform();
+      const tOrder = savedOrder.transform();
       tOrder.payout = {
         status: response.status,
         cardHolderName: response.cardHolderName,
@@ -69,15 +69,15 @@ const createPayout = async (req, order) => new Promise((resolve, reject) => {
  */
 exports.replace = async (req, res, next) => {
   try {
-    const {user} = req.locals;
-    const newUser = new Order(req.body);
-    const ommitRole = user.role !== 'admin' ? 'role' : '';
-    const newUserObject = omit(newUser.toObject(), '_id', ommitRole);
+    const {order} = req.locals;
+    const newOrder = new Order(req.body);
+    const ommitRole = order.role !== 'admin' ? 'role' : '';
+    const newOrderObject = omit(newOrder.toObject(), '_id', ommitRole);
 
-    await user.update(newUserObject, {override: true, upsert: true});
-    const savedUser = await Order.findById(user._id);
+    await order.update(newOrderObject, {override: true, upsert: true});
+    const savedOrder = await Order.findById(order._id);
 
-    res.json(savedUser.transform());
+    res.json(savedOrder.transform());
   } catch (error) {
     next(Order.checkDuplicateEmail(error));
   }
@@ -88,11 +88,11 @@ exports.replace = async (req, res, next) => {
  * @public
  */
 exports.update = (req, res, next) => {
-  const ommitRole = req.locals.user.role !== 'admin' ? 'role' : '';
-  const updatedUser = omit(req.body, ommitRole);
-  const user = Object.assign(req.locals.user, updatedUser);
+  const ommitRole = req.locals.order.role !== 'admin' ? 'role' : '';
+  const updatedOrder = omit(req.body, ommitRole);
+  const order = Object.assign(req.locals.order, updatedOrder);
 
-  user.save()
+  order.save()
     .then(savedOrder => res.json(savedOrder.transform()))
     .catch(e => next(e));
 };
@@ -116,9 +116,9 @@ exports.list = async (req, res, next) => {
  * @public
  */
 exports.remove = (req, res, next) => {
-  const {user} = req.locals;
+  const {order} = req.locals;
 
-  user.remove()
+  order.remove()
     .then(() => res.status(httpStatus.NO_CONTENT).end())
     .catch(e => next(e));
 };
